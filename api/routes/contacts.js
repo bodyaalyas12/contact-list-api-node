@@ -35,20 +35,21 @@ router.get('/getList', (req, res, next) => {
 		.exec()
 		.then(contacts => {
 			res.status(200).json({
-				message: 'all is ok',
+				message: 'everything is ok',
 				contacts
 			})
 		})
 })
 
 router.post('/create', upload.single('image'), (req, res, next) => {
-	console.log(req.file)
+	// console.log(JSON.parse(req.body.body))
+	const data = JSON.parse(req.body.form)
 	const contact = new Contact({
 		_id: new mongoose.Types.ObjectId(),
-		name: req.body.name,
-		phone: req.body.phone,
-		info: req.body.info,
-		image:req.file.path
+		name: data.name,
+		phone: data.phone,
+		info: data.info,
+		...(req.file && { image: req.file.path })
 	})
 	contact
 		.save()
@@ -68,7 +69,7 @@ router.post('/create', upload.single('image'), (req, res, next) => {
 
 router.delete('/delete/:id', (req, res, next) => {
 	const { id } = req.params
-	Contact.remove({
+	Contact.deleteOne({
 		_id: id
 	})
 		.exec()
@@ -88,7 +89,7 @@ router.delete('/delete/:id', (req, res, next) => {
 router.patch('/update/:id', (req, res, next) => {
 	const { id } = req.params
 	const { name, phone, info } = req.body
-	Contact.update(
+	Contact.updateOne(
 		{ _id: id },
 		{
 			$set: {

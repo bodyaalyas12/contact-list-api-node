@@ -31,6 +31,10 @@ app.use('/images', express.static('images'))
 
 app.use('/contacts', contactsRoutes)
 
+app.use('/', (req, res, next) => {
+	// res.status(200)
+})
+
 app.use((req, res, next) => {
 	const error = new Error('Not found')
 	error.status = 404
